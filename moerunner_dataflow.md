@@ -1,5 +1,5 @@
 # MoeRunner Data Flow
-
+```
 ┌─────────────────────────────────────────────────────────────────┐
 │ Dispatcher Output                                               │
 │   - hidden_states: [num_tokens, hidden_dim]                     │
@@ -33,3 +33,4 @@
 │ POST_PERMUTE (format output for combiner)                       │
 │   - Just wraps output tensor in expected data structure         │
 └─────────────────────────────────────────────────────────────────┘
+```
