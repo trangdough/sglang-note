@@ -612,19 +612,30 @@ I'll create a detailed step-by-step implementation guide with flowcharts showing
 
 ---
 
-## Implementation Checklist
+## Install `pplx-kernels`
+```bash
+git clone https://github.com/perplexityai/pplx-kernels
+cd pplx-kernels
+# H100
+TORCH_CUDA_ARCH_LIST=9.0a+PTX python3 setup.py bdist_wheel
+# B200
+TORCH_CUDA_ARCH_LIST=10.0+PTX python3 setup.py bdist_wheel
+pip install dist/*.whl
+```
 
-| Step | File | Change | Done |
-|------|------|--------|------|
-| 1A | System | Install NVSHMEM | ⬜ |
-| 1B | System | Install PPLX kernels | ⬜ |
-| 2A | `base.py` | Add `DispatchOutputFormat.PPLX` | ⬜ |
-| 2B | `base.py` | Add `CombineInputFormat.PPLX` | ⬜ |
-| 2C | `utils.py` | Add `MoeA2ABackend.PPLX` | ⬜ |
-| 3 | `server_args.py` | Add `"pplx"` to choices | ⬜ |
-| 4 | `pplx.py` | Create new dispatcher file | ⬜ |
-| 5 | `__init__.py` | Export PPLX classes | ⬜ |
-| 6 | `layer.py` | Add PPLX to factory | ⬜ |
-| 7A | Test | Unit tests | ⬜ |
-| 7B | Test | Integration tests | ⬜ |
-| 7C | Test | E2E model test | ⬜ |
+## Install `nvshmem4py`
+```bash
+pip install nvshmem4py-cu13
+```
+
+## Run MoE model
+```bash
+FLASHINFER_DISABLE_VERSION_CHECK=1 \
+python -m sglang.launch_server \
+--model zai-org/GLM-4.6-FP8 \
+--tp 8 \
+--ep 8 \
+--mem-fraction-static 0.7 \
+--max-running-requests 100 \
+--moe-a2a-backend pplx
+```
